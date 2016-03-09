@@ -8,10 +8,6 @@
 
 import Foundation
 
-
-//temp class
-
-
 public class OutgoingMessage {
     
     var socket: Socket!

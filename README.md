@@ -1,141 +1,82 @@
-
-![Trevi?] (./index.png)
+![Trevi](./imgs/trevi_logo.png)
 
 [![Swift 2.2](https://img.shields.io/badge/Swift-2.2-orange.svg?style=flat)](https://developer.apple.com/swift/)
-[![Platforms OS X ](https://img.shields.io/badge/Platforms-OS%20X-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
+[![Mac OS X](https://img.shields.io/badge/platform-osx-lightgrey.svg?style=flat)](https://developer.apple.com/swift/)
+[![Ubuntu](https://img.shields.io/badge/platform-linux-lightgrey.svg?style=flat)](http://www.ubuntu.com/)
+![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
 
-## Trevi
+## Overview
 Fast, light web application server framwork for Swift. Trevi uses an event-driven, non-blocking I/O model based on libuv (https://github.com/libuv/libuv).<br>
-Trevi refers to node.js core modules and makes Trevi core modules similary to support node.js features. Trevi also hopes that node.js developers easily use and develop Trevi. <br><br>
-Lime is improved web framework for Trevi, and Lime refers to express. (Lime does not support many core modules in express yet.)
+Trevi refers to node.js core modules and makes Trevi core modules similary to support node.js features. Trevi also hopes that node.js developers easily use and develop Trevi.<br><br>
 
+## Versioning
+Trevi follows the semantic versioning scheme. The API change and backwards compatibility rules are those indicated by SemVer.
 
-## Build Instructions
+## Usage
+1. Create a new project directory
+    ```bash
+    mkdir HelloTrevi
+    ```
+  
+2. Initialize this project as a new Swift package project
+    ```bash
+    cd HelloTrevi
+    swift build --init
+    ```
+    Now your directory structure under HelloTrevi should look like this :
+    <pre>
+    HelloTrevi
+    ├── Package.swift
+    ├── Sources
+    │   └── main.swift
+    └── Tests
+      └── <i>empty</i>
+    </pre>
+    **Note**: For more information on the Swift Package Manager, go [here](https://swift.org/package-manager)
 
-### OS X (recommended)
-For Debug builds (recommended) run:
-```
-$ make all
-```
+3. Add a dependency of Trevi for your project (Package.swift) :
+    ```swift
+    import PackageDescription
+    
+    let package = Package(
+        name: "HelloTrevi",
+        dependencies: [
+          .Package(url: "https://github.com/Trevi-Swift/Trevi.git", versions: Version(0,1,0)..<Version(0,2,0)),
+        ])
+    ```
 
-For Release builds run:
-```
-$ make all COMPILE_MODE=Release
-```
-
-### Ubuntu
-Trevi is not working on ubuntu yet, but it can be build soon.
-
-### Running tests
-For testing Trevi, use Xcode and build the project
-
-
-## Examples
-```swift
-let server = Http ()
-
-server.createServer({ (req, res, next) in
-
-    var chuck = ""
-    func ondata(c: String){
-        chuck += c
-    }
-
-    func onend(){
-        res.write(chuck)
-        res.end()
-
-    }
-
-    req.on("data", ondata)
-    req.on("end", onend)
-
-}).listen(8080)
-
-```
-
-OR
-
-```swift
-
-let server = Http ()
-
-let lime = Lime()
-
-
-lime.set("views", "\(__dirname)/views");
-
-lime.set("view engine", SwiftServerPage())
-
-lime.use(Favicon())
-
-lime.use(ServeStatic(path: "\(__dirname)/public"))
-
-lime.use(BodyParser())
-
-lime.use("/", Root())
-
-lime.use { (req, res, next) in
-    res.statusCode = 404
-    res.send("404 error")
-}
-
-server.createServer(lime).listen(8080)
-
-```
-
-lime class 
-```swift
-
-import Foundation
-import Lime
-
-public class Root{
-
-    private let lime = Lime()
-    private var router: Router!
-
-    public init(){
-
-        router = lime.router
-
-        router.get("/") { req , res , next in
-            res.render("index.ssp", args: ["title":"Trevi"])
+4. Import the modules, create and start a HTTPServer in your code (Sources/main.swift) :
+    ```swift
+    import Trevi
+    
+    let server = Http ()
+    
+    server.createServer({ (req, res, next) in
+        var data = ""
+        func ondata(chunk: String){
+            data += chunk
         }
-
-        router.get("/index") { req , res , next in
-            res.write("index get")
+        func onend(){
+            res.write(data)
             res.end()
         }
+        req.on("data", ondata)
+        req.on("end", onend)
+    }).listen(8080)
+    ```
+5. Build your application :
+    - Mac OS X: `swift build -Xcc -fblocks -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib`
+    - Ubuntu:  `swift build -Xcc -fblocks`
 
-        router.post("/index") { req , res , next in
-            print("\(req.json["name"])")
-            res.send("index post")
-        }
+6. Now run your application:
+    ```bash
+    .build/debug/HelloTrevi
+    ```
 
-        router.get("/lime") { req , res , next in
-            res.write("lime get")
-            res.end()
-        }
+7. Open your browser at [http://localhost:8080](http://localhost:8080)
 
-        router.get("/trevi/:param1") { req , res , next in
-            print("[GET] /trevi/:praram")
-        }
-    }
-}
+8. Enjoy Trevi!
 
-extension Root: Require{
-    public func export() -> Router {
-        return self.router
-    }
-}
-
-```
-
-### CocoaPods 
-### Carthage
-### Youtube
-[![Youtube](./screenshot.png)](https://www.youtube.com/watch?v=v7O5dq4_s2Q)
-
-https://youtu.be/W6hPkevipX4
+## License
+This library is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).
 
