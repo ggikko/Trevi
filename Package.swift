@@ -20,5 +20,6 @@ let package = Package(
     name: "Trevi",
     dependencies: [
     	.Package(url: "https://github.com/Trevi-Swift/Trevi-sys.git", majorVersion: 0)
-    ]
+    ],
+    exclude: ["Makefile", "Xcode"]
 )
