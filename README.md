@@ -9,21 +9,16 @@
 Fast, light web application server framwork for Swift. Trevi uses an event-driven, non-blocking I/O model based on libuv (https://github.com/libuv/libuv).  
 Trevi refers to node.js core modules and makes Trevi core modules similary to support node.js features. Trevi also hopes that node.js developers easily use and develop Trevi.  
 
+## Notice
+If you want to build or test all projects at Xcode, please check out [Trevi-Dev](https://github.com/Trevi-Swift/Trevi-Dev). 
+Otherwise, you can build Trevi, lime and other packages by using Swift Package manager.  
+[Here](https://github.com/Trevi-Swift/example-trevi-lime) are an example and it now runs on Linux.  
+
 ## Features
 - Handles persistent streams
 - No dependencies
 - Effective data transfer
-
-## The parser extracts the following information from HTTP messages
-- Header fields and values
-- Request method
-- Response status code
-- HTTP version
-- Request URL
-- Message body
-
-## Versioning
-Trevi follows the semantic versioning scheme. The API change and backwards compatibility rules are those indicated by SemVer.
+- Parsing HTTP message
 
 ## Swift version
 Trevi works with the latest version of Swift 2.2 Snapshot. You can download Swift binaries on [here](https://swift.org/download/#latest-development-snapshots).
@@ -162,6 +157,9 @@ Trevi works with the latest version of Swift 2.2 Snapshot. You can download Swif
 7. Open your browser at [http://localhost:8080](http://localhost:8080)
 
 8. Enjoy Trevi!
+
+## Versioning
+Trevi follows the semantic versioning scheme. The API change and backwards compatibility rules are those indicated by [SemVer](http://semver.org/).
 
 ## License
 This library is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).
