@@ -8,6 +8,8 @@
 
 import Foundation
 
+// To be class parents who have the data for processing of response.
+
 public class OutgoingMessage {
     
     var socket: Socket!

@@ -8,7 +8,7 @@
 
 import Foundation
 
-
+//  Class we use to handle a request.
 public class IncomingMessage: StreamReadable{
     
     public var socket: Socket!

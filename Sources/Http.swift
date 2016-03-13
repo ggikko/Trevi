@@ -26,6 +26,10 @@ public protocol ApplicationProtocol {
     func createApplication() -> Any
 }
 
+
+/*
+    The server interfaces. class, To use to make the server.
+*/
 public class Http {
     
     public init () {

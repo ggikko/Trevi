@@ -8,7 +8,10 @@
 
 import Foundation
 
+/*
+    After a request rather than parsing through message sent to, and make this request by using the server.
 
+*/
 public struct HeaderInfo{
     public var header = [ String: String ]()
     public var versionMajor: String!
@@ -21,6 +24,13 @@ public struct HeaderInfo{
 
 }
 
+
+/*
+    Parses and the appropriate data, called events to fit the occasion.
+    When the body was created, after body is created
+    Head could be formed after, head, was created,
+    Run the event.
+*/
 public class HttpParser{
     
     public var incoming: IncomingMessage!
@@ -50,7 +60,7 @@ public class HttpParser{
     }
 
     
-    func headerParser(p:UnsafePointer<Int8> , length: Int ,onHeaderInfo: (String,Bool)->() , onBodyData: (NSData)->()) {
+    private func headerParser(p:UnsafePointer<Int8> , length: Int ,onHeaderInfo: (String,Bool)->() , onBodyData: (NSData)->()) {
     
         readLine(p, length: length) { (pointer, data, readTotalSize, readlineSize) -> (Bool) in
 
@@ -70,6 +80,7 @@ public class HttpParser{
         }
     }
     
+    //Parser run
     public func execute(data: NSData, length: Int){
 
         if self.headerInfo == nil{            

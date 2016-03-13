@@ -9,6 +9,11 @@
 import Foundation
 import TreviSys
 
+
+/*
+    Classes that can be the Web server, and user to register events.
+
+*/
 public class HttpServer: Net{
     
     private var parsers = [uv_stream_ptr:HttpParser!]()
