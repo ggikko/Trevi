@@ -3,7 +3,7 @@
 //  Trevi
 //
 //  Created by LeeYoseob on 2016. 3. 3..
-//  Copyright © 2016년 LeeYoseob. All rights reserved.
+//  Copyright © 2016 Trevi Community. All rights reserved.
 //
 
 import Foundation
@@ -48,7 +48,7 @@ public class IncomingMessage: StreamReadable{
     public var body: [String: String]!
     public var bodyText: String!
     
-    public var files: [String: AnyObject]!
+    public var files: [String: File]!
     
     public var app: AnyObject!
     

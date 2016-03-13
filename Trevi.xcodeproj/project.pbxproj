@@ -147,7 +147,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0720;
-				ORGANIZATIONNAME = "Trevi Foundation";
+				ORGANIZATIONNAME = "Trevi Community";
 				TargetAttributes = {
 					ACE514411C91F9CB009EC206 = {
 						CreatedOnToolsVersion = 7.2.1;

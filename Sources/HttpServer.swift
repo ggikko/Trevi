@@ -3,7 +3,7 @@
 //  Trevi
 //
 //  Created by LeeYoseob on 2016. 3. 4..
-//  Copyright © 2016년 LeeYoseob. All rights reserved.
+//  Copyright © 2016 Trevi Community. All rights reserved.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ public class HttpServer: Net{
         super.init()
         self.requestListener = requestListener
         
-        self.on("request", requestListener) // Not fixed calling time
+        self.on("request", requestListener) // when made request(IncomingMessage),response(ServerResponse) be called
         
         self.on("listening", onlistening) //when server start listening client socket, Should called this callback
         
@@ -30,13 +30,12 @@ public class HttpServer: Net{
         parsers.removeAll()
     }
     
-    func onlistening(){
+    private func onlistening(){
         print("Http Server starts ip : \(ip), port : \(port).")
         
         switch requestListener {
         case let ra as ApplicationProtocol:
             let eventName = "request"
-            
             self.removeEvent(eventName)
             self.on(eventName, ra.createApplication())
             break
@@ -49,7 +48,7 @@ public class HttpServer: Net{
         return parsers[socket.handle]!
     }
     
-    func connectionListener(sock: AnyObject){
+    private func connectionListener(sock: AnyObject){
         
         let socket = sock as! Socket
         
@@ -74,7 +73,9 @@ public class HttpServer: Net{
             
             parser(socket).onBody = { body in
                 let incoming = self.parser(socket).incoming
-                incoming.push(body)
+                if body.length > 0 {
+                    incoming.push(body)   
+                }
             }
             
             parser(socket).onBodyComplete = {
@@ -131,7 +132,6 @@ public class HttpServer: Net{
             
             return false
         }
-        
     }
 }
 

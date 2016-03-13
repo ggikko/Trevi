@@ -3,14 +3,18 @@
 //  Trevi
 //
 //  Created by JangTaehwan on 2016. 2. 20..
-//  Copyright © 2016년 LeeYoseob. All rights reserved.
+//  Copyright © 2016 Trevi Community. All rights reserved.
 //
 
 import Foundation
 import Libuv
 import TreviSys
 
-public class Socket: EventEmitter { // should be inherited stream, eventEmitter
+/**
+Socket interface for Net or Net users.
+Should be inherited StreamReadable.
+*/
+public class Socket: EventEmitter {
     
     public let timer : Timer = Timer()
     
@@ -21,24 +25,29 @@ public class Socket: EventEmitter { // should be inherited stream, eventEmitter
     public var onend: ((Void)->(Void))?
     
     public init(handle: uv_stream_ptr) {
+        
         self.handle = handle
         super.init()
+        
+        // Set dictionary to get the object by stream pointer
         Socket.dictionary[handle] = self
     }
     
     
     public func write(data: NSData, handle : uv_stream_ptr) {
  
-        // Should add buffer module.
-        
         Stream.doWrite(data, handle: handle)
     }
     
+    // Shutdown handle first to block close the Socket while writting.
+    // After that, close Socket and onClose will be called.
     public func close() {
     
-        Handle.close(uv_handle_ptr(handle))
+        Stream.doShutDown(handle)
     }
     
+    
+    // Block to close the Socket in delay msecs.
     public func setKeepAlive(msecs: UInt32) {
         
         Tcp.setKeepAlive(uv_tcp_ptr(self.handle), enable: 1, delay: msecs)
@@ -47,8 +56,7 @@ public class Socket: EventEmitter { // should be inherited stream, eventEmitter
 }
 
 
-// Socket static functions.
-
+// Socket static callbacks. These support closure event.
 extension Socket {
 
     public static func onConnection(handle : uv_stream_ptr , _ EE: EventEmitter) {
@@ -64,12 +72,15 @@ extension Socket {
         }
     }
     
+
+    // Set timeout to close the Socket after msecs from last write call.
     public static func onAfterWrite(handle: uv_stream_ptr) -> Void {
         
         if let wrap = Socket.dictionary[uv_stream_ptr(handle)] {
-            Socket.onTimeout(wrap.timer.timerhandle, msecs: 200) {
+            Socket.onTimeout(wrap.timer.timerhandle, msecs: 40) {
                 _ in
-                Handle.close(uv_handle_ptr(handle))
+                
+                Stream.doShutDown(handle)
             }
         }
     }
@@ -86,6 +97,8 @@ extension Socket {
         }
     }
     
+    
+    // Set timer event. This will remove previous event and start new event on Socket.
     public static func onTimeout( handle : uv_timer_ptr, msecs : UInt64, callback : ((uv_timer_ptr)->()) ) {
         
         if let wrap = Handle.dictionary[uv_handle_ptr(handle)]{
@@ -98,6 +111,32 @@ extension Socket {
 }
 
 
+/**
+Network module with system and Trevi. 
+ 
+ Target : 
+ 
+ public class EchoServer : Net {
+ 
+     public init(){
+         super.init()
+         self.on("connection", connectionListener)
+     }
+ 
+     func connectionListener(sock: AnyObject){
+ 
+         let socket = sock as! Socket
+ 
+         // Set event when get a data.
+         socket.ondata = { data, nread in
+             socket.write(data, handle: socket.handle)
+         }
+ 
+         // Set end event.
+         socket.onend = { }
+    }
+ }
+ */
 public class Net: EventEmitter {
     
     public let ip : String
@@ -112,17 +151,18 @@ public class Net: EventEmitter {
     }
     
    
-    public func listen(port: Int32) {
+    public func listen(port: Int32) -> Int32? {
         self.port = port
         
+        // Set listening event to call user function when start server.
         self.emit("listening")
         
         self.server.event.onConnection = { 
             client in
             
+            // Set user callback events.
             Socket.onConnection(client, self)
             
-            // Set client event
             if let wrap = Handle.dictionary[uv_handle_ptr(client)] {
                 
                 wrap.event.onRead = Socket.onRead
@@ -131,10 +171,14 @@ public class Net: EventEmitter {
             }
         }
         
-        Tcp.bind(self.server.tcpHandle, address : self.ip, port: self.port)
-        Tcp.listen(self.server.tcpHandle)
+        guard let _ = Tcp.bind(self.server.tcpHandle, address : self.ip, port: self.port) else {
+            return nil
+        }
+        guard let _ = Tcp.listen(self.server.tcpHandle) else {
+            return nil
+        }
         
-        Loop.run(mode: UV_RUN_DEFAULT)
+        return 0
     }
     
 }

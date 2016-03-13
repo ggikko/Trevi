@@ -3,13 +3,12 @@
 //  Trevi
 //
 //  Created by LeeYoseob on 2016. 3. 3..
-//  Copyright © 2016년 LeeYoseob. All rights reserved.
+//  Copyright © 2016 Trevi Community. All rights reserved.
 //
 
 import Foundation
 
-
-
+// Make a response of user requests.
 public class ServerResponse: OutgoingMessage{
     //for Lime
     public var req: IncomingMessage!
@@ -30,9 +29,10 @@ public class ServerResponse: OutgoingMessage{
     private var _body: String?{
         didSet {
             self._hasbody = true
-            var type = "text/plain;charset=utf-8"
-            if ((_body?.containsString("!DOCTYPE")) != nil){
-                type = "text/html;charset=utf-8"
+            var type = "text/plain; charset=utf-8"
+            if (_body?.containsString("!DOCTYPE")) != nil ||
+                (_body?.containsString("<html>")) != nil{
+                type = "text/html; charset=utf-8"
             }
             header[Content_Type] = type
         }
@@ -41,7 +41,6 @@ public class ServerResponse: OutgoingMessage{
     private var _bodyData: NSData! {
         didSet{
             self._hasbody = true
-            header[Content_Type] = ""
         }
     }
     
@@ -89,6 +88,7 @@ public class ServerResponse: OutgoingMessage{
         }
     
         self._end(result)
+        
         onFinished?(self)
     }
     
@@ -98,14 +98,14 @@ public class ServerResponse: OutgoingMessage{
         firstLine = "\(httpVersion) \(statusCode) \(status)" + CRLF
     }
     
-    //will move outgoingMessage
+
     public func write(data: String, encoding: String! = nil, type: String! = ""){
         _body = data
         _hasbody = true
     }
     
-    //will move outgoingMessage
     public func write(data: NSData, encoding: String! = nil, type: String! = ""){
+    
         _bodyData = data
         if let t = type{
             header[Content_Type] = t
@@ -113,7 +113,6 @@ public class ServerResponse: OutgoingMessage{
         _hasbody = true
     }
 
-    //will move outgoingMessage
     public func write(data: [String : String], encoding: String! = nil, type: String! = ""){
         bodys = data
         _hasbody = true
@@ -156,7 +155,7 @@ public class ServerResponse: OutgoingMessage{
             if value.lengthOfBytesUsingEncoding ( NSUTF8StringEncoding ) == 0 {
                 resultString += "\(key)\r\n"
             } else {
-                resultString += "\(key):\(value)\r\n"
+                resultString += "\(key): \(value)\r\n"
             }
         }
         resultString += CRLF

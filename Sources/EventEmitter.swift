@@ -3,7 +3,7 @@
 //  Trevi
 //
 //  Created by LeeYoseob on 2016. 2. 1..
-//  Copyright © 2016년 LeeYoseob. All rights reserved.
+//  Copyright © 2016 Trevi Community. All rights reserved.
 //
 
 import Foundation
@@ -14,19 +14,37 @@ public typealias noParamsEvent = (Void) -> Void
 
 public typealias oneStringeEvent = (String) -> Void
 
+public typealias oneDataEvent = (NSData) -> Void
+
 typealias EmiiterType = ((AnyObject) -> Void)?
 
+
+
+/*
+    This class is an asynchronous data it uses to communicate, and passed to register and invokes the event.
+    But now, because there is a limit of the type of all can't transmit the data. Will quickly change to have it
+*/
 
 public class EventEmitter{
     
     var events = [String:Any]()
     
-    init(){}
+    init(){
+    
+    }
+    
     deinit{
         
     }
     
+    //register event function with name
     func on(name: String, _ emitter: Any){
+
+        guard events[name] == nil  else{
+            print("already contain event")
+            return
+        }
+        
         events[name] = emitter
     }
     
@@ -34,8 +52,14 @@ public class EventEmitter{
         events.removeValueForKey(name)
     }
     
+    //invoke registed event with Parameters
     func emit(name: String, _ arg : AnyObject...){
-        let emitter = events[name]
+
+        
+        guard let emitter = events[name]  else{
+            print("called emitter")
+            return
+        }
         
         switch emitter {
         case let cb as HttpCallback:
@@ -46,6 +70,7 @@ public class EventEmitter{
                 cb(req,res, nil)
             }
             break
+            
         case let cb as emitable:
             if arg.count == 1 {
                 cb(arg.first!)
@@ -67,10 +92,15 @@ public class EventEmitter{
                 #endif
             }
             break
+        case let cb as oneDataEvent:
+            if arg.count == 1 {
+                cb(arg.first as! NSData)
+            }
+            break
+
         case let cb as noParamsEvent:
             cb()
             break
-            
             
         default:
             break
