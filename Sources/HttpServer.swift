@@ -124,6 +124,9 @@ public class HttpServer: Net{
             res.connection = req.socket
             
             res.httpVersion = "HTTP/"+req.version
+            if let _ = req.header[Content_Length]{
+                req.hasBody = true
+            }
             if let connection = req.header[Connection] where connection == "keep-alive" {
                 res.header[Connection] = connection
                 res.shouldKeepAlive = true

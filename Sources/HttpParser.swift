@@ -121,7 +121,6 @@ public class HttpParser{
             } , onBodyData: { body in
 
                 self.onBody!(body)
-                
                 self.headerInfo.hasbody = true
                 if self.contentLength == body.length {
                     self.onBodyComplete!()

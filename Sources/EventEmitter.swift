@@ -54,12 +54,11 @@ public class EventEmitter{
     
     //invoke registed event with Parameters
     func emit(name: String, _ arg : AnyObject...){
-
-        
-        guard let emitter = events[name]  else{
-            print("called emitter")
-            return
-        }
+        let emitter = events[name]
+//        guard let emitter = events[name]  else{
+//            print("called emitter")
+//            return
+//        }
         
         switch emitter {
         case let cb as HttpCallback:

@@ -238,11 +238,7 @@ private func addChunk(stream: StreamReadable, chunk: NSData?, addToFront: Bool) 
         }
         state.flowing = true
         if (state.flowing && state.length == 0 && !state.sync) {
-            #if os(Linux)
-                stream.emit("data", StringWrapper(string: chunk!))
-            #else
-                stream.emit("data", chunk!)
-            #endif
+            stream.emit("data", chunk!)
             stream.read(0)
         } else {
             state.length += chunkBuf.length
