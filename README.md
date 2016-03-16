@@ -21,89 +21,110 @@ Otherwise, you can build Trevi, lime and other packages by using Swift Package m
 - Parsing HTTP message
 
 ## Swift version
-Trevi works with the latest version of Swift 2.2 Snapshot. You can download Swift binaries on [here](https://swift.org/download/#latest-development-snapshots).
+Trevi works with the latest version of Swift 3.0 or latest Snapshot. You can download Swift binaries on [here](https://swift.org/download/#latest-development-snapshots).
 
 ## Installation (Ubuntu; APT-based linux)
-1. Install Swift dependencies on linux :
+1. Update your local package index first.
     ```bash
-    sudo apt-get install clang libicu-dev
+    $ sudo apt-get update && sudo apt-get upgrade
     ```
-  
-2. Install libuv dependencies on linux :
+    
+2. Install Swift dependencies on linux:
     ```bash
-    sudo apt-get install autoconf make build-essential gcc g++
+    $ sudo apt-get install clang libicu-dev
     ```
-  
+    
 3. Install Swift depending on your platform on the follow [link](https://swift.org/download) (The latest version are recommended).
 
-4. After installation of Swift, check your PATH environment variable whether Swift binary path is set or not. If it is not set execute below. :
+4. After installation of Swift, check your PATH environment variable whether Swift binary path is set or not. If it is not set execute below.:
     ```bash
-    $ export PATH=/path/to/swift/installed:"${PATH}"
+    $ export PATH=/path/to/swift/installed/usr/bin:"${PATH}"
     ```
-
+    
     More details : 'Linux' on [here](https://swift.org/download)
-  
-5. Clone libuv :
+    
+5. Install git to clone libuv:
+    ```bash
+    $ sudo apt-get install git
+    ```
+    
+6. Install libuv dependencies on linux:
+    ```bash
+    $ sudo apt-get install autoconf automake make build-essential libtool gcc g++
+    ```
+    
+7. Clone libuv:
     ```bash
     $ git clone https://github.com/libuv/libuv.git
     ```
-  
-6. Install libuv :
+    
+6. Install libuv:
     ```bash
     $ cd libuv
     $ sh autogen.sh
     $ ./configure
     $ make
     $ make check
-    $ make install
+    $ sudo make install
     ```
-
+    
     More details : Build Instructions on [libuv](https://github.com/libuv/libuv)
+    
+5. Set LD_LIBRARY_PATH environment variable to run executable.
+    ```bash
+    $ export LD_LIBRARY_PATH=/usr/local/lib/:/usr/lib:$LD_LIBRARY_PATH
+    ```
 
 ## Installation (OS X)
 1. Install Swift depending on your platform on the follow [link](https://swift.org/download) (The latest version are recommended).
 
-2. After installation of Swift, check your PATH environment variable whether Swift binary path is set or not. If it is not set execute below. :
+2. After installation of Swift, check your PATH environment variable whether Swift binary path is set or not. If it is not set execute below.:
     ```bash
     $ export PATH=/Library/Developer/Toolchains/swift-latest.xctoolchain/usr/bin:"${PATH}"
     ```
-
+    
     More details : 'Apple Platforms' on [here](https://swift.org/download)
-  
-3. Clone libuv :
+    
+3. Clone libuv:
     ```bash
     $ git clone https://github.com/libuv/libuv.git
     ```
-  
-4. Install libuv :
+    
+4. Install libuv:
     ```bash
     $ cd libuv
     $ sh autogen.sh
     $ ./configure
     $ make
     $ make check
-    $ make install
+    $ sudo make install
     ```
-
-    or using Homebrew :
-
+    
+    or using Homebrew:
+    
     ```bash
     $ brew install --HEAD libuv
     ```
-
+    
     More details : Build Instructions on [libuv](https://github.com/libuv/libuv)
+    
+5. Set LD_LIBRARY_PATH environment variable to run executable.
+    ```bash
+    $ export LD_LIBRARY_PATH=/usr/local/lib/:/usr/lib:$LD_LIBRARY_PATH
+    ```
 
 ## Usage
 1. Create a new project directory
     ```bash
     mkdir HelloTrevi
     ```
-  
+    
 2. Initialize this project as a new Swift package project
     ```bash
     cd HelloTrevi
     swift build --init
     ```
+    
     Now your directory structure under HelloTrevi should look like this :
     <pre>
     HelloTrevi
@@ -146,8 +167,15 @@ Trevi works with the latest version of Swift 2.2 Snapshot. You can download Swif
     }).listen(8080)
     ```
 5. Build your application :
-    - Mac OS X: `swift build -Xcc -fblocks -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib`
-    - Ubuntu:  `swift build -Xcc -fblocks`
+    - Mac OS X:  
+        ```bash
+        swift build -Xcc -fblocks -Xswiftc -I/usr/local/include -Xlinker -L/usr/local/lib
+        ```
+        
+    - Ubuntu:  
+        ```bash
+        swift build -Xcc -fblocks
+        ```
 
 6. Now run your application:
     ```bash
