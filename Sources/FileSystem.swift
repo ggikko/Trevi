@@ -55,7 +55,7 @@ public class FileSystem {
             
             
             if self.options.fd == nil {
-                self.options.fd = FSBase.open(self.loop.loopHandle, handle: self.pipe.pipeHandle, path : path,
+                self.options.fd = FSBase.open(self.loop.loopHandle, pipe: self.pipe.pipeHandle, path : path,
                     flags: self.options.flags, mode: self.options.mode)
             }
             
@@ -132,8 +132,6 @@ public class FileSystem {
                 
                 writeStream.writeData(data)
             }
-            
-            Loop.run(writeStream.loop.loopHandle, mode: UV_RUN_DEFAULT)
         }
         
     }
@@ -143,21 +141,19 @@ public class FileSystem {
     
     public class WriteStream {
         
-        public let loop : Loop
         public let pipe : Pipe
         public var options : Options = Options()
         
         public init?(path : String, options : Options? = nil) {
             
-            self.loop = Loop()
-            self.pipe = Pipe(loop: loop.loopHandle)
+            self.pipe = Pipe()
             self.options.flags = O_CREAT | O_WRONLY
             self.options.mode = 0o666
             
             if let options = options { self.setOptions(options) }
             
             if self.options.fd == nil {
-                self.options.fd = FSBase.open(self.loop.loopHandle, handle: self.pipe.pipeHandle, path : path,
+                self.options.fd = FSBase.open(pipe: self.pipe.pipeHandle, path : path,
                     flags: self.options.flags, mode: self.options.mode)
             }
             
@@ -178,7 +174,6 @@ public class FileSystem {
         
         deinit {
             Handle.close(self.pipe.handle)
-            Loop.close(self.loop.loopHandle)
         }
         
         
